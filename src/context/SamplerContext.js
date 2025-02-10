@@ -12,6 +12,7 @@ export const SamplerProvider = ({ children }) => {
   const [player, setPlayer] = useState(null);
   const [buffer, setBuffer] = useState(null);
   const [blob, setBlob] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   return (
     <SamplerContext.Provider
@@ -34,6 +35,8 @@ export const SamplerProvider = ({ children }) => {
         setBuffer,
         blob,
         setBlob,
+        isPlaying,
+        setIsPlaying,
       }}
     >
       {children}

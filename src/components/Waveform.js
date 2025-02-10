@@ -13,10 +13,13 @@ function Waveform() {
         player,
         blob,
         buffer,
+        isPlaying,
     } = useContext(SamplerContext);
 
     useEffect(() => {
         if (blob) {
+            //console.log('bite');
+            
             // Initialiser WaveSurfer
             wavesurferRef.current = WaveSurfer.create({
                 container: waveformRef.current,
@@ -38,6 +41,7 @@ function Waveform() {
 
             // Mettre à jour la forme d'onde pendant la lecture
             Tone.getTransport().scheduleRepeat(() => {
+                console.log('bite');
                 const currentTime = Tone.getTransport().seconds;
                 wavesurferRef.current.seekTo(currentTime / player.buffer.duration);
             }, 0.1);
@@ -56,6 +60,16 @@ function Waveform() {
             }
         };
     }, [blob]);
+
+    useEffect(() => {
+        Tone.getTransport().scheduleRepeat(() => {
+            if(!isPlaying) return;
+            console.log('bite2');
+            console.log(isPlaying);
+            const currentTime = Tone.getTransport().seconds;
+            wavesurferRef.current.seekTo(currentTime / player.buffer.duration);
+        }, 0.1);
+    }, [player, isPlaying]);
 
     return (
         <div>

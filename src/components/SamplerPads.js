@@ -43,8 +43,6 @@ function SamplerPads() {
   };
 
   const addSlice = (key, time) => {
-    console.log('addSlice', key, time);
-    
     const relativeTime = startTime ? time - startTime : 0;
     const newSlice = { key, time : relativeTime, active: false, tempo, pitch, attributed: true };
     setSlices([...slices, newSlice]);
@@ -71,8 +69,6 @@ function SamplerPads() {
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      console.log('handleKeyDown', e.key);
-      
       if (recording) {
         addSlice(e.key, Tone.now());
       }

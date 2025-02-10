@@ -1,27 +1,47 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import * as Tone from 'tone';
 import classNames from 'classnames';
+import { SamplerContext } from '../context/SamplerContext';
 
 
 function Pad({ slice, player, setSlices, slices, baseTempo }) {
+  const { isPlaying, setIsPlaying } = useContext(SamplerContext);
+  
   const playSlice = () => {
-    if(!slice.attributed) return;
-    const offset = parseFloat(slice.time);
+    if (!slice.attributed) return;
+    console.log('plauSlice');
+
+    // Annuler toute programmation précédente et arrêter le player
+    Tone.getTransport().cancel();
+    player.sync().stop();
+
+    const offset = Math.max(parseFloat(slice.time), 0);
     const playbackRate = slice.tempo / baseTempo;
     player.playbackRate = playbackRate;
 
     const nextSliceIndex = slices.findIndex((s) => s.key === slice.key) + 1;
     const duration = nextSliceIndex < slices.length ? slices[nextSliceIndex].time - offset : undefined;
-    
-    if(duration) {
-        Tone.getTransport().start(undefined, offset, duration).stop('+' + duration);
-    }else{
-        Tone.getTransport().start(undefined, offset);
+
+    if(Tone.getTransport().state !== 'started') {
+      Tone.getTransport().start();
+    }
+
+    Tone.getTransport().start(undefined, offset,);
+
+    // Démarrer la lecture synchronisée du player à l'offset, avec une durée si spécifiée
+    player.sync().start(undefined, offset, duration);
+    setIsPlaying(true);
+
+    //turn to false after duration
+    if (duration) {
+      setTimeout(() => {
+        setIsPlaying(false);
+      }, duration * 1000);
     }
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === slice.key) {
+    if (e.key === slice.key && slice.attributed) {
       playSlice();
       const updatedSlices = slices.map((s) =>
         s.key === slice.key ? { ...s, active: true } : s 
