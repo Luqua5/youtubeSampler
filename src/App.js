@@ -1,23 +1,18 @@
-import logo from './logo.svg';
 import './App.css';
+import YoutubeInput from './components/YoutubeInput';
+import SamplerPads from './components/SamplerPads';
+import Waveform from './components/Waveform';
+import {SamplerProvider} from './context/SamplerContext';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>YouTube Sampler</h1>
+      <SamplerProvider>
+        <YoutubeInput/>
+        <Waveform/>
+        <SamplerPads/>
+      </SamplerProvider>
     </div>
   );
 }
