@@ -1,4 +1,6 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useRef, useEffect } from 'react';
+import WaveSurfer from 'wavesurfer.js';
+import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.esm.js'
 
 export const SamplerContext = createContext();
 
@@ -13,6 +15,8 @@ export const SamplerProvider = ({ children }) => {
   const [buffer, setBuffer] = useState(null);
   const [blob, setBlob] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const wavesurfer = useRef(null);
+  const timeoutRef = useRef(null);  
 
   return (
     <SamplerContext.Provider
@@ -37,6 +41,8 @@ export const SamplerProvider = ({ children }) => {
         setBlob,
         isPlaying,
         setIsPlaying,
+        wavesurfer,
+        timeoutRef,
       }}
     >
       {children}

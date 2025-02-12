@@ -1,42 +1,41 @@
-import React, { useState, useEffect, useContext } from 'react';
-import * as Tone from 'tone';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import classNames from 'classnames';
 import { SamplerContext } from '../context/SamplerContext';
 
 
-function Pad({ slice, player, setSlices, slices, baseTempo }) {
-  const { isPlaying, setIsPlaying } = useContext(SamplerContext);
+function Pad({ slice, setSlices, slices, baseTempo }) {
+  const { isPlaying, setIsPlaying, wavesurfer, timeoutRef } = useContext(SamplerContext);
   
   const playSlice = () => {
     if (!slice.attributed) return;
-    console.log('plauSlice');
 
-    // Annuler toute programmation précédente et arrêter le player
-    Tone.getTransport().cancel();
-    player.sync().stop();
-
-    const offset = Math.max(parseFloat(slice.time), 0);
-    const playbackRate = slice.tempo / baseTempo;
-    player.playbackRate = playbackRate;
-
-    const nextSliceIndex = slices.findIndex((s) => s.key === slice.key) + 1;
-    const duration = nextSliceIndex < slices.length ? slices[nextSliceIndex].time - offset : undefined;
-
-    if(Tone.getTransport().state !== 'started') {
-      Tone.getTransport().start();
+    if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
     }
 
-    Tone.getTransport().start(undefined, offset,);
+    const playbackRate = slice.tempo / baseTempo;
+    console.log('playbackRate', playbackRate);
+    
+    wavesurfer.current.setPlaybackRate(playbackRate);
 
-    // Démarrer la lecture synchronisée du player à l'offset, avec une durée si spécifiée
-    player.sync().start(undefined, offset, duration);
+    const nextSliceIndex = slices.findIndex((s) => s.key === slice.key) + 1;
+    const duration = nextSliceIndex < slices.length ? slices[nextSliceIndex].time - slice.time : undefined;
+
     setIsPlaying(true);
+
+    console.log('duration', duration);
+
+    wavesurfer.current.seekTo(slice.time / wavesurfer.current.getDuration());
+    wavesurfer.current.play();
 
     //turn to false after duration
     if (duration) {
-      setTimeout(() => {
+        timeoutRef.current = setTimeout(() => {
         setIsPlaying(false);
-      }, duration * 1000);
+        console.log('pause', slice.key);
+        wavesurfer.current.pause();
+      }, (duration*1000)*(1/playbackRate));
     }
   };
 

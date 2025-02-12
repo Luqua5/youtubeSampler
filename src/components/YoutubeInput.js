@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useContext } from 'react';
-import * as Tone from "tone";
 import axios from 'axios';
 import { SamplerContext } from '../context/SamplerContext';
 
@@ -26,18 +25,17 @@ function YouTubeInput() {
         params: { url: videoUrl },
         responseType: 'blob',
       });
-      Tone.start();
+
       const blob = response.data;
       const arrayBuffer = await blob.arrayBuffer();
-      const audioContext = Tone.getContext().rawContext;
-      const buffer = await audioContext.decodeAudioData(arrayBuffer);
-      setBuffer(buffer);
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+      setBuffer(audioBuffer);
       setBlob(blob);
-      
-      const player = new Tone.Player(buffer).toDestination();
       setStatus('converted');
-      //player.start();
-      setPlayer(player);
+
+
     } catch (error) {
       console.error(error);
     }

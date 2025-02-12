@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect, useContext } from 'react';
-import * as Tone from 'tone';
 import Pad from './Pad';
 import { SamplerContext } from '../context/SamplerContext';
 import { analyze } from 'web-audio-beat-detector';
@@ -24,27 +23,28 @@ function SamplerPads() {
     setStartTime,
     baseTempo,
     setBaseTempo,
-    player,
     buffer,
+    wavesurfer,
   } = useContext(SamplerContext);
 
   const startRecording = async () => {
-    if (player) {
-      await Tone.start();
-      Tone.getTransport().start(undefined, 0);
+    if (wavesurfer.current) {
+      wavesurfer.current.play();
       setRecording(true);
-      setStartTime(Tone.now());
+      setStartTime(wavesurfer.current.getCurrentTime());
     }
   };
 
   const stopRecording = () => {
     setRecording(false);
-    Tone.getTransport().stop();
+    wavesurfer.current.pause();
   };
 
   const addSlice = (key, time) => {
-    const relativeTime = startTime ? time - startTime : 0;
-    const newSlice = { key, time : relativeTime, active: false, tempo, pitch, attributed: true };
+    console.log(key, time);
+    
+    //const relativeTime = startTime ? time - startTime : 0; 
+    const newSlice = { key, time : time, active: false, tempo, pitch, attributed: true };
     setSlices([...slices, newSlice]);
   };
 
@@ -70,7 +70,7 @@ function SamplerPads() {
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (recording) {
-        addSlice(e.key, Tone.now());
+        addSlice(e.key, wavesurfer.current.getCurrentTime());
       }
     };
 
@@ -89,10 +89,10 @@ function SamplerPads() {
   }, [pitch, tempo]);
 
   useEffect(() => {
-    if (player) {
-      getBPM(player._buffer);
+    if (buffer) {
+      getBPM(buffer);
     }
-  }, [player]);
+  }, [buffer]);
 
   return (
     <div>
@@ -129,7 +129,6 @@ function SamplerPads() {
                 <Pad
                   key={key}
                   slice={slice || { key, time: 0, active: false, tempo, pitch, attributed: false }}
-                  player={player}
                   setSlices={setSlices}
                   slices={slices}
                   baseTempo={baseTempo}
