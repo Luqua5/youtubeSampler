@@ -70,11 +70,11 @@ function Pad({ slice, setSlices, slices, baseTempo }) {
   return (
     <div
       className={classNames(
-        'inline-block w-16 h-16 m-1 border-2 border-black rounded bg-white text-center leading-16 text-lg font-bold cursor-pointer shadow-md transition duration-200 transform',
+        "w-16 h-16 flex items-center justify-center border-2 rounded cursor-pointer font-bold transition transform duration-200",
         {
-          'bg-red-500 translate-y-1': slice.active,
-          'bg-white': !slice.active,
-          'opacity-50': !slice.attributed,
+          "bg-red-500 text-white": slice.active,
+          "bg-white text-black": !slice.active,
+          "opacity-50": !slice.attributed,
         }
       )}
       onClick={playSlice}

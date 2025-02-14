@@ -42,17 +42,23 @@ function YouTubeInput() {
   };
 
   return (
-    <div>
-      <input
-        type="text"
-        placeholder="Entre une URL YouTube"
-        value={url}
-        onChange={handleInputChange}
-      />
-      <button onClick={handleSample}>
-        Enregistrer
-      </button>
-      <p>status : {status}</p>
+    <div className="mb-6">
+      <div className="flex flex-col sm:flex-row items-center mb-4">
+          <input
+            type="text"
+            placeholder="Entrez une URL YouTube"
+            value={url}
+            onChange={handleInputChange}
+            className="flex-1 border border-gray-300 rounded-md p-2 mb-2 sm:mb-0 sm:mr-2"
+          />
+          <button
+            onClick={handleSample}
+            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+          >
+            Enregistrer
+          </button>
+      </div>
+      <p className="text-gray-600 text-sm">Status : {status}</p>
     </div>
   );
 }

@@ -17,6 +17,8 @@ export const SamplerProvider = ({ children }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const wavesurfer = useRef(null);
   const timeoutRef = useRef(null);  
+  const regionsRef = useRef(null);
+  
 
   return (
     <SamplerContext.Provider
@@ -43,6 +45,7 @@ export const SamplerProvider = ({ children }) => {
         setIsPlaying,
         wavesurfer,
         timeoutRef,
+        regionsRef,
       }}
     >
       {children}

@@ -25,6 +25,7 @@ function SamplerPads() {
     setBaseTempo,
     buffer,
     wavesurfer,
+    regionsRef
   } = useContext(SamplerContext);
 
   const startRecording = async () => {
@@ -51,6 +52,7 @@ function SamplerPads() {
   const clearPads = () => {
     setSlices([]);
     setStartTime(null);
+    regionsRef.current.clearRegions();
   };
 
   const getBPM = async () => {
@@ -95,34 +97,50 @@ function SamplerPads() {
   }, [buffer]);
 
   return (
-    <div>
-      <h2>Sampler Pads</h2>
-      <button onClick={startRecording}>Record sample - </button>
-      <button onClick={stopRecording}>Stop recording - </button>
-      <button onClick={clearPads}>Clear pads</button>
-      <div>
-        <label>
-          Tempo:
+    <div className="p-4 bg-gray-50 rounded-md shadow">
+      <h2 className="text-xl font-semibold mb-4">Sampler Pads</h2>
+      <div className="flex flex-wrap gap-4 mb-4">
+        <button onClick={startRecording} className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+          Record sample
+        </button>
+        <button onClick={stopRecording} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+          Stop recording
+        </button>
+        <button onClick={clearPads} className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">
+          Clear pads
+        </button>
+      </div>
+      <div className="flex flex-col gap-4 mb-4">
+        <div className="flex items-center gap-2">
+          <label className="w-24">Tempo:</label>
           <input
             type="number"
             value={tempo}
             onChange={(e) => setTempo(e.target.value)}
+            className="border border-gray-300 rounded-md p-1 w-20"
           />
-          <button onClick={doubleTempo}>x2</button>
-          <button onClick={halfTempo}>x0.5</button>
-        </label>
-        <label>
-          Pitch:
+          <button onClick={doubleTempo} className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">
+            x2
+          </button>
+          <button onClick={halfTempo} className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">
+            x0.5
+          </button>
+        </div>
+        {/*
+        <div className="flex items-center gap-2">
+          <label className="w-24">Pitch:</label>
           <input
             type="number"
             value={pitch}
             onChange={(e) => setPitch(e.target.value)}
+            className="border border-gray-300 rounded-md p-1 w-20"
           />
-        </label>
+        </div>
+        */}
       </div>
       <div className="keyboard">
         {azertyKeys.map((row, rowIndex) => (
-          <div key={rowIndex} className="flex justify-center mb-2">
+          <div key={rowIndex} className="flex justify-center gap-2 mb-2">
             {row.map((key) => {
               const slice = slices.find((s) => s.key === key);
               return (
