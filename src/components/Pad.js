@@ -4,7 +4,7 @@ import { SamplerContext } from '../context/SamplerContext';
 
 
 function Pad({ slice, setSlices, slices, baseTempo }) {
-  const { isPlaying, setIsPlaying, wavesurfer, timeoutRef, recording, isOneShot } = useContext(SamplerContext);
+  const { regionsRef, setIsPlaying, wavesurfer, timeoutRef, recording, isOneShot } = useContext(SamplerContext);
   
   const playSlice = () => {
     if (!slice.attributed) return;

@@ -9,6 +9,9 @@ const azertyKeys = [
   ['w', 'x', 'c', 'v', 'b', 'n']
 ];
 
+const random = (min, max) => Math.random() * (max - min) + min
+const randomColor = () => `rgba(${random(0, 255)}, ${random(0, 255)}, ${random(0, 255)}, 0.5)`
+
 function SamplerPads() {
   const {
     slices,
@@ -44,10 +47,26 @@ function SamplerPads() {
   };
 
   const addSlice = (key, time) => {
-    console.log(key, time);
-    //const relativeTime = startTime ? time - startTime : 0; 
-    const newSlice = { key, time : time, active: false, tempo, pitch, attributed: true };
+    const region = regionsRef.current.addRegion({
+      start: wavesurfer.current.getCurrentTime(),
+      color: randomColor(),
+    });
+    const id = Math.random().toString(36).substr(2, 9);
+    const newSlice = {id, key, time : time, active: false, tempo, pitch, attributed: true, idRegion : region.id };
     setSlices([...slices, newSlice]);
+    console.log('newSlice', newSlice);
+
+    region.on('update-end', () => {
+      const updatedTime = region.start;
+      setSlices(prevSlices => {
+        const updatedSlices = prevSlices.map(s =>
+          s.id === id ? { ...s, time: updatedTime } : s
+        );
+        console.log('updatedSlices', updatedSlices);
+        return updatedSlices;
+      });
+    });
+    
   };
 
   const clearPads = () => {

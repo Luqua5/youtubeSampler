@@ -4,9 +4,6 @@ import Timeline from 'wavesurfer.js/dist/plugins/timeline.esm.js';
 import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.esm.js';
 import { SamplerContext } from '../context/SamplerContext';
 
-const random = (min, max) => Math.random() * (max - min) + min
-const randomColor = () => `rgba(${random(0, 255)}, ${random(0, 255)}, ${random(0, 255)}, 0.5)`
-
 function Waveform() {
   const waveformRef = useRef(null);
   const { blob, wavesurfer, slices, recording, regionsRef } = useContext(SamplerContext);
@@ -45,16 +42,6 @@ function Waveform() {
       wavesurfer.current.zoom(zoom);
     }
   }, [zoom, wavesurfer]);
-
-  // ajout regions
-  useEffect(() => {
-    if (wavesurfer.current && recording) {
-        regionsRef.current.addRegion({
-            start: wavesurfer.current.getCurrentTime(),
-            color: randomColor(),
-        });
-    }
-  }, [slices]);
 
   return (
     <div className="mb-6">
