@@ -58,8 +58,10 @@ function Waveform() {
 
   return (
     <div className="mb-6">
-      <div ref={waveformRef} id="waveform" className="w-full h-40 bg-gray-200 rounded-md"></div>
-      <div id="wave-timeline" className="mt-2"></div>
+      <div id="waveform" className="w-full h-40 bg-gray-200 rounded-md">
+        <div ref={waveformRef}></div>
+        <div id="wave-timeline" className="mt-2"></div>
+      </div>
       <div className="mt-4 px-4">
         <input
           type="range"

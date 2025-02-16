@@ -4,7 +4,7 @@ import { SamplerContext } from '../context/SamplerContext';
 
 
 function Pad({ slice, setSlices, slices, baseTempo }) {
-  const { isPlaying, setIsPlaying, wavesurfer, timeoutRef } = useContext(SamplerContext);
+  const { isPlaying, setIsPlaying, wavesurfer, timeoutRef, recording, isOneShot } = useContext(SamplerContext);
   
   const playSlice = () => {
     if (!slice.attributed) return;
@@ -19,53 +19,60 @@ function Pad({ slice, setSlices, slices, baseTempo }) {
     
     wavesurfer.current.setPlaybackRate(playbackRate);
 
-    const nextSliceIndex = slices.findIndex((s) => s.key === slice.key) + 1;
-    const duration = nextSliceIndex < slices.length ? slices[nextSliceIndex].time - slice.time : undefined;
-
     setIsPlaying(true);
-
-    console.log('duration', duration);
 
     wavesurfer.current.seekTo(slice.time / wavesurfer.current.getDuration());
     wavesurfer.current.play();
 
-    //turn to false after duration
-    if (duration) {
-        timeoutRef.current = setTimeout(() => {
+    if(isOneShot){
+        const nextSliceIndex = slices.findIndex((s) => s.key === slice.key) + 1;
+        const duration = nextSliceIndex < slices.length ? slices[nextSliceIndex].time - slice.time : undefined;
+
+        if (duration) {
+            timeoutRef.current = setTimeout(() => {
+            setIsPlaying(false);
+            console.log('pause', slice.key);
+            wavesurfer.current.pause();
+            }, (duration*1000)*(1/playbackRate));
+        }
+    }
+  };
+
+  const stopSlice = () => {
+    if(!isOneShot){
         setIsPlaying(false);
-        console.log('pause', slice.key);
         wavesurfer.current.pause();
-      }, (duration*1000)*(1/playbackRate));
-    }
-  };
-
-  const handleKeyDown = (e) => {
-    if (e.key === slice.key && slice.attributed) {
-      playSlice();
-      const updatedSlices = slices.map((s) =>
-        s.key === slice.key ? { ...s, active: true } : s 
-      );
-      setSlices(updatedSlices);
-    }
-  };
-
-  const handleKeyUp = (e) => {
-    if (e.key === slice.key) {
-      const updatedSlices = slices.map((s) =>
-        s.key === slice.key ? { ...s, active: false } : s
-      );
-      setSlices(updatedSlices);
     }
   };
 
   useEffect(() => {
+    const handleKeyDown = (e) => {        
+        if (e.key === slice.key && slice.attributed && !recording && !slice.active) {
+            playSlice();
+            const updatedSlices = slices.map((s) =>
+            s.key === slice.key ? { ...s, active: true } : s 
+            );
+            setSlices(updatedSlices);
+        }
+    };
+
+    const handleKeyUp = (e) => {
+        if (e.key === slice.key && !recording) {
+            stopSlice();
+            const updatedSlices = slices.map((s) =>
+            s.key === slice.key ? { ...s, active: false } : s
+            );
+            setSlices(updatedSlices);
+        }
+    };
+
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [slices]);
+  }, [slices, recording, slice.key, setSlices]);
 
   return (
     <div

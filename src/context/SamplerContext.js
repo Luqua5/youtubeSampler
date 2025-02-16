@@ -7,14 +7,15 @@ export const SamplerContext = createContext();
 export const SamplerProvider = ({ children }) => {
   const [slices, setSlices] = useState([]);
   const [recording, setRecording] = useState(false);
-  const [tempo, setTempo] = useState(120);
+  const [tempo, setTempo] = useState(0);
   const [pitch, setPitch] = useState(0);
   const [startTime, setStartTime] = useState(null);
-  const [baseTempo, setBaseTempo] = useState(120);
+  const [baseTempo, setBaseTempo] = useState(0);
   const [player, setPlayer] = useState(null);
   const [buffer, setBuffer] = useState(null);
   const [blob, setBlob] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isOneShot, setIsOneShot] = useState(true);
   const wavesurfer = useRef(null);
   const timeoutRef = useRef(null);  
   const regionsRef = useRef(null);
@@ -46,6 +47,8 @@ export const SamplerProvider = ({ children }) => {
         wavesurfer,
         timeoutRef,
         regionsRef,
+        isOneShot,
+        setIsOneShot,
       }}
     >
       {children}

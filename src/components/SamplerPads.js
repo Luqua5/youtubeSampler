@@ -25,14 +25,16 @@ function SamplerPads() {
     setBaseTempo,
     buffer,
     wavesurfer,
-    regionsRef
+    regionsRef,
+    isOneShot,
+    setIsOneShot,
   } = useContext(SamplerContext);
 
   const startRecording = async () => {
     if (wavesurfer.current) {
       wavesurfer.current.play();
       setRecording(true);
-      setStartTime(wavesurfer.current.getCurrentTime());
+      setStartTime(wavesurfer.current.getCurrentTime());      
     }
   };
 
@@ -43,7 +45,6 @@ function SamplerPads() {
 
   const addSlice = (key, time) => {
     console.log(key, time);
-    
     //const relativeTime = startTime ? time - startTime : 0; 
     const newSlice = { key, time : time, active: false, tempo, pitch, attributed: true };
     setSlices([...slices, newSlice]);
@@ -67,6 +68,10 @@ function SamplerPads() {
 
   const halfTempo = () => {
     setTempo(tempo / 2);
+  }
+  
+  const handleOneShot = () => {
+    setIsOneShot(!isOneShot);
   }
 
   useEffect(() => {
@@ -96,6 +101,10 @@ function SamplerPads() {
     }
   }, [buffer]);
 
+  useEffect(() => {
+    console.log('Recording changed:', recording);
+  }, [recording]);
+
   return (
     <div className="p-4 bg-gray-50 rounded-md shadow">
       <h2 className="text-xl font-semibold mb-4">Sampler Pads</h2>
@@ -109,6 +118,10 @@ function SamplerPads() {
         <button onClick={clearPads} className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">
           Clear pads
         </button>
+        <button onClick={handleOneShot} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+          {isOneShot ? "One-shot" : "Hold"}
+        </button>
+
       </div>
       <div className="flex flex-col gap-4 mb-4">
         <div className="flex items-center gap-2">
