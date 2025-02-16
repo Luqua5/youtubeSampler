@@ -29,11 +29,12 @@ function Pad({ slice, setSlices, slices, baseTempo }) {
         const duration = nextSliceIndex < slices.length ? slices[nextSliceIndex].time - slice.time : undefined;
 
         if (duration) {
+            const adjustedDuration = (duration * 1000 + 90) * (1 / playbackRate);
             timeoutRef.current = setTimeout(() => {
-            setIsPlaying(false);
-            console.log('pause', slice.key);
-            wavesurfer.current.pause();
-            }, (duration*1000)*(1/playbackRate));
+                setIsPlaying(false);
+                console.log('pause', slice.key);
+                wavesurfer.current.pause();
+            }, adjustedDuration);
         }
     }
   };
