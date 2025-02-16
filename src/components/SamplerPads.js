@@ -31,19 +31,24 @@ function SamplerPads() {
     regionsRef,
     isOneShot,
     setIsOneShot,
+    setIsPlaying,
+    isPlaying
   } = useContext(SamplerContext);
 
-  const startRecording = async () => {
+  const handlePauseStart = async () => {
     if (wavesurfer.current) {
-      wavesurfer.current.play();
-      setRecording(true);
-      setStartTime(wavesurfer.current.getCurrentTime());      
+      if (isPlaying) {
+        wavesurfer.current.pause();
+        setIsPlaying(false);
+      } else {
+        wavesurfer.current.play();
+        setIsPlaying(true);
+      }
     }
   };
 
-  const stopRecording = () => {
-    setRecording(false);
-    wavesurfer.current.pause();
+  const handleRecording = () => {
+    setRecording(!recording);
   };
 
   const addSlice = (key, time) => {
@@ -128,11 +133,27 @@ function SamplerPads() {
     <div className="p-4 bg-gray-50 rounded-md shadow">
       <h2 className="text-xl font-semibold mb-4">Sampler Pads</h2>
       <div className="flex flex-wrap gap-4 mb-4">
-        <button onClick={startRecording} className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
-          Record sample
-        </button>
-        <button onClick={stopRecording} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
-          Stop recording
+        <button
+          onClick={handleRecording}
+          className={`w-10 h-10 rounded-full focus:outline-none ${
+            recording ? "bg-red-900 hover:bg-red-800" : "bg-red-600 hover:bg-red-700"
+          }`}
+        />
+        <button
+          onClick={handlePauseStart}
+          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex items-center justify-center"
+        >
+          {isPlaying ? (
+            // Icône pause
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6" />
+            </svg>
+          ) : (
+            // Icône play
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-5.197-3.034A1 1 0 008 9.034v5.932a1 1 0 001.555.832l5.197-3.034a1 1 0 000-1.664z" />
+            </svg>
+          )}
         </button>
         <button onClick={clearPads} className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">
           Clear pads
