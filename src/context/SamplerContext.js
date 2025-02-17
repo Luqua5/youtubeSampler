@@ -7,10 +7,10 @@ export const SamplerContext = createContext();
 export const SamplerProvider = ({ children }) => {
   const [slices, setSlices] = useState([]);
   const [recording, setRecording] = useState(false);
-  const [tempo, setTempo] = useState(0);
+  const [tempo, setTempo] = useState(90);
   const [pitch, setPitch] = useState(0);
   const [startTime, setStartTime] = useState(null);
-  const [baseTempo, setBaseTempo] = useState(0);
+  const [baseTempo, setBaseTempo] = useState(90);
   const [player, setPlayer] = useState(null);
   const [buffer, setBuffer] = useState(null);
   const [blob, setBlob] = useState(null);

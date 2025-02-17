@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useContext } from 'react';
 import Pad from './Pad';
+import Metronome from './Metronome';
 import { SamplerContext } from '../context/SamplerContext';
 import { analyze } from 'web-audio-beat-detector';
 
@@ -144,12 +145,10 @@ function SamplerPads() {
           className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex items-center justify-center"
         >
           {isPlaying ? (
-            // Icône pause
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6" />
             </svg>
           ) : (
-            // Icône play
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-5.197-3.034A1 1 0 008 9.034v5.932a1 1 0 001.555.832l5.197-3.034a1 1 0 000-1.664z" />
             </svg>
@@ -179,6 +178,7 @@ function SamplerPads() {
             x0.5
           </button>
         </div>
+        <Metronome tempo={tempo} />
         {/*
         <div className="flex items-center gap-2">
           <label className="w-24">Pitch:</label>
