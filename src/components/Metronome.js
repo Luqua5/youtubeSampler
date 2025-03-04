@@ -1,6 +1,8 @@
 import { useMetronome } from "react-metronome-hook";
 import click1 from "../assets/sounds/metronome.wav";
 import click2 from "../assets/sounds/metronomeup.wav";
+import { PiMetronome } from "react-icons/pi";
+import { IconContext } from "react-icons";
 
 const Metronome = ({ tempo }) => {
   const {
@@ -16,7 +18,9 @@ const Metronome = ({ tempo }) => {
   return (
     <div id="metronome">
       <button onClick={isTicking ? stopMetronome : startMetronome}>
-        {isTicking ? "Stop" : "Start"} Metronome
+        <IconContext.Provider value={{ size: "2em", color: "white" }}>
+          <PiMetronome /> 
+        </IconContext.Provider>
       </button>
     </div>
   );

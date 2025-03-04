@@ -80,8 +80,8 @@ function Pad({ slice, setSlices, slices, baseTempo }) {
       className={classNames(
         "w-16 h-16 flex items-center justify-center border-2 rounded cursor-pointer font-bold transition transform duration-200",
         {
-          "bg-red-500 text-white": slice.active,
-          "bg-white text-black": !slice.active,
+          "bg-primary text-white": slice.active,
+          "bg-gray-700 text-white": !slice.active,
           "opacity-50": !slice.attributed,
         }
       )}

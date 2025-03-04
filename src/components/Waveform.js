@@ -45,7 +45,7 @@ function Waveform() {
 
   return (
     <div className="mb-6">
-      <div id="waveform" className="w-full h-40 bg-gray-200 rounded-md">
+      <div id="waveform" className="w-full h-40 bg-stone-950 rounded-md">
         <div ref={waveformRef}></div>
         <div id="wave-timeline" className="mt-2"></div>
       </div>

@@ -5,7 +5,7 @@ import { SamplerContext } from '../context/SamplerContext';
 
 function YouTubeInput() {
   const [url, setUrl] = useState('');
-  const [status, setStatus] = useState('converting');
+  const [status, setStatus] = useState('');
   
   const {
     player,
@@ -43,19 +43,19 @@ function YouTubeInput() {
 
   return (
     <div className="mb-6">
-      <div className="flex flex-col sm:flex-row items-center mb-4">
+      <div className="flex">
           <input
             type="text"
             placeholder="Entrez une URL YouTube"
             value={url}
             onChange={handleInputChange}
-            className="flex-1 border border-gray-300 rounded-md p-2 mb-2 sm:mb-0 sm:mr-2"
+            className="flex-1 border border-gray-700 rounded-l-md p-2 mb-2 sm:mb-0 bg-gray-700 text-white"
           />
           <button
             onClick={handleSample}
-            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+            className="bg-primary text-white px-4 py-2 rounded-r-md hover:bg-primary-dark font-bold"
           >
-            Enregistrer
+            LOAD
           </button>
       </div>
       <p className="text-gray-600 text-sm">Status : {status}</p>

@@ -5,18 +5,18 @@ import { SamplerProvider } from './context/SamplerContext';
 
 function App() {
   return (
-    <div className="min-h-screen flex flex-col bg-gray-100">
-      <header className="bg-blue-600 text-white py-4 shadow">
+    <div className="min-h-screen flex flex-col bg-gray-900">
+      <header className="bg-gray-800 text-white py-4 shadow">
         <h1 className="text-center text-4xl font-bold">YouTube Sampler</h1>
       </header>
       <SamplerProvider>
-        <main className="flex-grow max-w-4xl mx-auto my-8 p-8 bg-white shadow-lg rounded-lg">
+        <main className="flex-grow max-w-4xl mx-auto my-8 p-8 bg-gray-800 shadow-lg rounded-lg">
           <YoutubeInput />
           <Waveform />
           <SamplerPads />
         </main>
       </SamplerProvider>
-      <footer className="bg-blue-600 text-white text-center py-3">
+      <footer className="bg-gray-800 text-white text-center py-3">
         Luka Courmont - 2025
       </footer>
     </div>

@@ -99,6 +99,14 @@ function SamplerPads() {
     setIsOneShot(!isOneShot);
   }
 
+  const increaseTempo = () => {
+    setTempo(tempo + 1);
+  }
+
+  const decreaseTempo = () => {
+    setTempo(tempo - 1);
+  }
+
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (recording) {
@@ -131,18 +139,21 @@ function SamplerPads() {
   }, [recording]);
 
   return (
-    <div className="p-4 bg-gray-50 rounded-md shadow">
-      <h2 className="text-xl font-semibold mb-4">Sampler Pads</h2>
-      <div className="flex flex-wrap gap-4 mb-4">
+    <div className="p-4 bg-gray-700 rounded-md shadow">
+      <div className="flex flex-wrap gap-4 mb-4 items-center">
+        {/* Bouton record */}
         <button
           onClick={handleRecording}
-          className={`w-10 h-10 rounded-full focus:outline-none ${
-            recording ? "bg-red-900 hover:bg-red-800" : "bg-red-600 hover:bg-red-700"
+          className={`flex items-center justify-center w-12 h-12 rounded-l-md focus:outline-none ${
+            recording ? "bg-red-800 hover:bg-red-700" : "bg-red-600 hover:bg-red-500"
           }`}
-        />
+        >
+          <div className="w-6 h-6 bg-white rounded-full"></div>
+        </button>
+        {/* Bouton Play/Pause collé */}
         <button
           onClick={handlePauseStart}
-          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex items-center justify-center"
+          className="bg-green-700 text-white px-4 py-2 rounded-r-md hover:bg-green-600 flex items-center justify-center"
         >
           {isPlaying ? (
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -154,42 +165,41 @@ function SamplerPads() {
             </svg>
           )}
         </button>
-        <button onClick={clearPads} className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">
+        {/* Bouton Clear pads */}
+        <button onClick={clearPads} className="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-500">
           Clear pads
         </button>
-        <button onClick={handleOneShot} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+        {/* Bouton One-shot / Hold */}
+        <button onClick={handleOneShot} className="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-600">
           {isOneShot ? "One-shot" : "Hold"}
         </button>
-
-      </div>
-      <div className="flex flex-col gap-4 mb-4">
-        <div className="flex items-center gap-2">
-          <label className="w-24">Tempo:</label>
-          <input
-            type="number"
-            value={tempo}
-            onChange={(e) => setTempo(e.target.value)}
-            className="border border-gray-300 rounded-md p-1 w-20"
-          />
-          <button onClick={doubleTempo} className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">
-            x2
-          </button>
-          <button onClick={halfTempo} className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">
-            x0.5
-          </button>
+        <div className="flex items-center gap-2 bg-gray-900 p-2 rounded-md w-fit">
+          <div className="relative">
+            <input
+              type="number"
+              value={tempo}
+              onChange={(e) => setTempo(Number(e.target.value))}
+              className="border border-gray-600 rounded-md p-1 w-20 no-spinner bg-gray-800 text-white"
+            />
+            <div className="absolute inset-y-0 right-0 flex flex-col items-center justify-center pr-2 gap-0">
+              <button onClick={increaseTempo} className="text-gray-400 hover:text-gray-200">
+                ▲
+              </button>
+              <button onClick={decreaseTempo} className="text-gray-400 hover:text-gray-200">
+                ▼
+              </button>
+            </div>
+          </div>
+          <div className='flex flex-col'>
+            <button onClick={doubleTempo} className="text-white">
+              x2
+            </button>
+            <button onClick={halfTempo} className="text-white">
+              1/2
+            </button>
+          </div>
         </div>
         <Metronome tempo={tempo} />
-        {/*
-        <div className="flex items-center gap-2">
-          <label className="w-24">Pitch:</label>
-          <input
-            type="number"
-            value={pitch}
-            onChange={(e) => setPitch(e.target.value)}
-            className="border border-gray-300 rounded-md p-1 w-20"
-          />
-        </div>
-        */}
       </div>
       <div className="keyboard">
         {azertyKeys.map((row, rowIndex) => (
