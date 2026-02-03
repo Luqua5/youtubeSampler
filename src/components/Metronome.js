@@ -17,8 +17,20 @@ const Metronome = ({ tempo }) => {
 
   return (
     <div id="metronome">
-      <button onClick={isTicking ? stopMetronome : startMetronome}>
-        <IconContext.Provider value={{ size: "2em", color: "white" }}>
+      <button 
+        onClick={isTicking ? stopMetronome : startMetronome}
+        className={`p-3 rounded-xl transition-all duration-300 transform hover:scale-110 ${
+          isTicking 
+            ? 'bg-gradient-to-r from-primary to-secondary shadow-lg shadow-primary/50 animate-pulse' 
+            : 'bg-dark-700 hover:bg-dark-600 border border-primary/30'
+        }`}
+        title={isTicking ? "Stop metronome" : "Start metronome"}
+      >
+        <IconContext.Provider value={{ 
+          size: "1.5em", 
+          color: isTicking ? "white" : "#A78BFA",
+          className: isTicking ? "animate-bounce-subtle" : ""
+        }}>
           <PiMetronome /> 
         </IconContext.Provider>
       </button>

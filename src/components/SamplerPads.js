@@ -139,71 +139,118 @@ function SamplerPads() {
   }, [recording]);
 
   return (
-    <div className="p-4 bg-gray-700 rounded-md shadow">
-      <div className="flex flex-wrap gap-4 mb-4 items-center">
-        {/* Bouton record */}
-        <button
-          onClick={handleRecording}
-          className={`flex items-center justify-center w-12 h-12 rounded-l-md focus:outline-none ${
-            recording ? "bg-red-800 hover:bg-red-700" : "bg-red-600 hover:bg-red-500"
+    <div className="bg-dark-700/30 backdrop-blur-sm border border-primary/20 rounded-xl p-6 shadow-xl">
+      <label className="block text-gray-300 font-semibold mb-4 text-sm uppercase tracking-wide">
+        Sample Pads
+      </label>
+      
+      {/* Control Panel */}
+      <div className="flex flex-wrap gap-3 mb-6 items-center bg-dark-800/50 p-4 rounded-xl border border-primary/10">
+        {/* Record & Play/Pause group */}
+        <div className="flex rounded-xl overflow-hidden shadow-lg">
+          <button
+            onClick={handleRecording}
+            className={`flex items-center justify-center w-14 h-14 transition-all duration-300 ${
+              recording 
+                ? "bg-red-600 hover:bg-red-500 animate-pulse" 
+                : "bg-red-500/80 hover:bg-red-500"
+            }`}
+            title={recording ? "Stop recording" : "Start recording"}
+          >
+            <div className={`${recording ? 'w-4 h-4 rounded-sm' : 'w-6 h-6 rounded-full'} bg-white transition-all duration-300`}></div>
+          </button>
+          
+          <button
+            onClick={handlePauseStart}
+            className="bg-gradient-to-r from-green-600 to-green-500 text-white px-6 hover:from-green-500 hover:to-green-400 flex items-center justify-center transition-all duration-300"
+            title={isPlaying ? "Pause" : "Play"}
+          >
+            {isPlaying ? (
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+              </svg>
+            ) : (
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            )}
+          </button>
+        </div>
+
+        {/* Clear & Mode buttons */}
+        <button 
+          onClick={clearPads} 
+          className="bg-gradient-to-r from-yellow-600 to-orange-500 text-white px-6 py-3 rounded-xl hover:from-yellow-500 hover:to-orange-400 font-semibold transition-all duration-300 shadow-lg hover:shadow-yellow-500/50 transform hover:scale-105"
+        >
+          Clear
+        </button>
+        
+        <button 
+          onClick={handleOneShot} 
+          className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg transform hover:scale-105 ${
+            isOneShot 
+              ? 'bg-gradient-to-r from-primary to-primary-dark text-white hover:shadow-primary/50' 
+              : 'bg-gradient-to-r from-secondary to-secondary-dark text-white hover:shadow-secondary/50'
           }`}
         >
-          <div className="w-6 h-6 bg-white rounded-full"></div>
-        </button>
-        {/* Bouton Play/Pause collé */}
-        <button
-          onClick={handlePauseStart}
-          className="bg-green-700 text-white px-4 py-2 rounded-r-md hover:bg-green-600 flex items-center justify-center"
-        >
-          {isPlaying ? (
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6" />
-            </svg>
-          ) : (
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-5.197-3.034A1 1 0 008 9.034v5.932a1 1 0 001.555.832l5.197-3.034a1 1 0 000-1.664z" />
-            </svg>
-          )}
-        </button>
-        {/* Bouton Clear pads */}
-        <button onClick={clearPads} className="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-500">
-          Clear pads
-        </button>
-        {/* Bouton One-shot / Hold */}
-        <button onClick={handleOneShot} className="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-600">
           {isOneShot ? "One-shot" : "Hold"}
         </button>
-        <div className="flex items-center gap-2 bg-gray-900 p-2 rounded-md w-fit">
+
+        {/* Tempo Control */}
+        <div className="flex items-center gap-3 bg-dark-900/80 px-4 py-2 rounded-xl border border-primary/20 shadow-lg">
+          <span className="text-gray-400 text-sm font-medium">BPM:</span>
           <div className="relative">
             <input
               type="number"
               value={tempo}
               onChange={(e) => setTempo(Number(e.target.value))}
-              className="border border-gray-600 rounded-md p-1 w-20 no-spinner bg-gray-800 text-white"
+              className="border border-primary/30 rounded-lg p-2 w-20 bg-dark-700 text-white font-mono text-center focus:outline-none focus:ring-2 focus:ring-primary transition-all"
             />
-            <div className="absolute inset-y-0 right-0 flex flex-col items-center justify-center pr-2 gap-0">
-              <button onClick={increaseTempo} className="text-gray-400 hover:text-gray-200">
-                ▲
+            <div className="absolute inset-y-0 right-2 flex flex-col justify-center gap-0.5">
+              <button 
+                onClick={increaseTempo} 
+                className="text-primary hover:text-primary-light transition-colors"
+              >
+                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                </svg>
               </button>
-              <button onClick={decreaseTempo} className="text-gray-400 hover:text-gray-200">
-                ▼
+              <button 
+                onClick={decreaseTempo} 
+                className="text-primary hover:text-primary-light transition-colors rotate-180"
+              >
+                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                </svg>
               </button>
             </div>
           </div>
-          <div className='flex flex-col'>
-            <button onClick={doubleTempo} className="text-white">
-              x2
+          <div className='flex gap-1'>
+            <button 
+              onClick={doubleTempo} 
+              className="px-3 py-1 bg-primary/20 hover:bg-primary/30 text-primary-light rounded-md text-xs font-bold transition-all"
+            >
+              ×2
             </button>
-            <button onClick={halfTempo} className="text-white">
-              1/2
+            <button 
+              onClick={halfTempo} 
+              className="px-3 py-1 bg-primary/20 hover:bg-primary/30 text-primary-light rounded-md text-xs font-bold transition-all"
+            >
+              ÷2
             </button>
           </div>
         </div>
-        <Metronome tempo={tempo} />
+
+        {/* Metronome */}
+        <div className="ml-auto">
+          <Metronome tempo={tempo} />
+        </div>
       </div>
-      <div className="keyboard">
+
+      {/* Keyboard Pads */}
+      <div className="keyboard space-y-3">
         {azertyKeys.map((row, rowIndex) => (
-          <div key={rowIndex} className="flex justify-center gap-2 mb-2">
+          <div key={rowIndex} className="flex justify-center gap-2">
             {row.map((key) => {
               const slice = slices.find((s) => s.key === key);
               return (

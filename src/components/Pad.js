@@ -6,6 +6,9 @@ import { SamplerContext } from '../context/SamplerContext';
 function Pad({ slice, setSlices, slices, baseTempo }) {
   const { regionsRef, setIsPlaying, wavesurfer, timeoutRef, recording, isOneShot } = useContext(SamplerContext);
   
+  // Référence pour stocker la source audio en cours de lecture
+  const audioSourceRef = useRef(null);
+  
   const playSlice = () => {
     if (!slice.attributed) return;
 
@@ -17,24 +20,47 @@ function Pad({ slice, setSlices, slices, baseTempo }) {
     const playbackRate = slice.tempo / baseTempo;
     console.log('playbackRate', playbackRate);
     
-    wavesurfer.current.setPlaybackRate(playbackRate);
+    // Trouver la région correspondante
+    const region = regionsRef.current.getRegions().find(r => r.id === slice.idRegion);
+    
+    if (region) {
+        // Jouer directement la région
+        wavesurfer.current.setPlaybackRate(playbackRate);
+        region.play();
+        setIsPlaying(true);
+        
+        if(isOneShot){
+          const nextSliceIndex = slices.findIndex((s) => s.key === slice.key) + 1;
+          const duration = nextSliceIndex < slices.length ? slices[nextSliceIndex].time - slice.time : undefined;
 
-    setIsPlaying(true);
-
-    wavesurfer.current.seekTo(slice.time / wavesurfer.current.getDuration());
-    wavesurfer.current.play();
-
-    if(isOneShot){
-        const nextSliceIndex = slices.findIndex((s) => s.key === slice.key) + 1;
-        const duration = nextSliceIndex < slices.length ? slices[nextSliceIndex].time - slice.time : undefined;
-
-        if (duration) {
-            const adjustedDuration = (duration * 1000 + 90) * (1 / playbackRate);
+          if (duration) {
+            const adjustedDuration = (duration * 1000) / playbackRate;
+            console.log('adjustedDuration', adjustedDuration);
+            console.log('region duration', region.start, region.end);
             timeoutRef.current = setTimeout(() => {
                 setIsPlaying(false);
-                console.log('pause', slice.key);
                 wavesurfer.current.pause();
             }, adjustedDuration);
+          }
+        }
+    } else {
+        // Fallback si pas de région (ne devrait pas arriver)
+        wavesurfer.current.setPlaybackRate(playbackRate);
+        setIsPlaying(true);
+        wavesurfer.current.setTime(slice.time);
+        wavesurfer.current.play();
+
+        if(isOneShot){
+            const nextSliceIndex = slices.findIndex((s) => s.key === slice.key) + 1;
+            const duration = nextSliceIndex < slices.length ? slices[nextSliceIndex].time - slice.time : undefined;
+
+            if (duration) {
+                const adjustedDuration = (duration * 1000) / playbackRate;
+                timeoutRef.current = setTimeout(() => {
+                    setIsPlaying(false);
+                    wavesurfer.current.pause();
+                }, adjustedDuration);
+            }
         }
     }
   };
@@ -51,7 +77,7 @@ function Pad({ slice, setSlices, slices, baseTempo }) {
         if (e.key === slice.key && slice.attributed && !recording && !slice.active) {
             playSlice();
             const updatedSlices = slices.map((s) =>
-            s.key === slice.key ? { ...s, active: true } : s 
+              s.key === slice.key ? { ...s, active: true } : s 
             );
             setSlices(updatedSlices);
         }
@@ -61,7 +87,7 @@ function Pad({ slice, setSlices, slices, baseTempo }) {
         if (e.key === slice.key && !recording) {
             stopSlice();
             const updatedSlices = slices.map((s) =>
-            s.key === slice.key ? { ...s, active: false } : s
+              s.key === slice.key ? { ...s, active: false } : s
             );
             setSlices(updatedSlices);
         }
@@ -75,19 +101,32 @@ function Pad({ slice, setSlices, slices, baseTempo }) {
     };
   }, [slices, recording, slice.key, setSlices]);
 
+  // Cleanup à la destruction du composant
+  useEffect(() => {
+    return () => {
+      if (audioSourceRef.current) {
+        try {
+          audioSourceRef.current.stop();
+        } catch (e) {
+          // Ignore
+        }
+      }
+    };
+  }, []);
+
   return (
     <div
       className={classNames(
-        "w-16 h-16 flex items-center justify-center border-2 rounded cursor-pointer font-bold transition transform duration-200",
+        "w-16 h-16 flex items-center justify-center border-2 rounded-xl cursor-pointer font-bold text-lg transition-all transform duration-200 shadow-lg",
         {
-          "bg-primary text-white": slice.active,
-          "bg-gray-700 text-white": !slice.active,
-          "opacity-50": !slice.attributed,
+          "bg-gradient-to-br from-primary to-secondary text-white border-primary-light shadow-primary/50 scale-110 animate-pulse": slice.active,
+          "bg-gradient-to-br from-dark-700 to-dark-600 text-gray-300 border-primary/30 hover:border-primary hover:scale-105 hover:shadow-primary/30": !slice.active && slice.attributed,
+          "bg-dark-800/50 text-gray-600 border-gray-700 opacity-40 cursor-not-allowed": !slice.attributed,
         }
       )}
       onClick={playSlice}
     >
-      {slice.key}
+      <span className="uppercase font-mono">{slice.key}</span>
     </div>
   );
 }

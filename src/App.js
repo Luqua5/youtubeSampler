@@ -5,19 +5,37 @@ import { SamplerProvider } from './context/SamplerContext';
 
 function App() {
   return (
-    <div className="min-h-screen flex flex-col bg-gray-900">
-      <header className="bg-gray-800 text-white py-4 shadow">
-        <h1 className="text-center text-4xl font-bold">YouTube Sampler</h1>
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-dark-900 via-dark-800 to-dark-700 relative overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/20 rounded-full blur-3xl animate-pulse-slow"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-secondary/20 rounded-full blur-3xl animate-pulse-slow" style={{animationDelay: '1s'}}></div>
+      </div>
+
+      <header className="relative bg-dark-800/50 backdrop-blur-md border-b border-primary/20 text-white py-6 shadow-2xl z-10">
+        <div className="max-w-7xl mx-auto px-4">
+          <h1 className="text-center text-5xl font-bold bg-gradient-to-r from-primary via-secondary to-primary-light bg-clip-text text-transparent animate-pulse-slow">
+            YouTube Sampler
+          </h1>
+          <p className="text-center text-gray-400 mt-2 text-sm">
+            Transform any YouTube video into your personal sample pad
+          </p>
+        </div>
       </header>
+
       <SamplerProvider>
-        <main className="flex-grow max-w-4xl mx-auto my-8 p-8 bg-gray-800 shadow-lg rounded-lg">
-          <YoutubeInput />
-          <Waveform />
-          <SamplerPads />
+        <main className="relative flex-grow w-full max-w-7xl mx-auto my-8 px-4 z-10">
+          <div className="bg-dark-800/40 backdrop-blur-xl shadow-2xl rounded-2xl border border-primary/10 p-8 space-y-6">
+            <YoutubeInput />
+            <Waveform />
+            <SamplerPads />
+          </div>
         </main>
       </SamplerProvider>
-      <footer className="bg-gray-800 text-white text-center py-3">
-        Luka Courmont - 2025
+
+      <footer className="relative bg-dark-800/50 backdrop-blur-md border-t border-primary/20 text-gray-400 text-center py-4 z-10">
+        <p className="text-sm">
+          Made by <span className="text-primary-light font-semibold">Luka Courmont</span>
+        </p>
       </footer>
     </div>
   );
