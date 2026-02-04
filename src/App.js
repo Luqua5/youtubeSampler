@@ -13,12 +13,11 @@ function App() {
 
       <header className="relative bg-dark-800/50 backdrop-blur-md border-b border-primary/20 text-white py-6 shadow-2xl z-10">
         <div className="max-w-7xl mx-auto px-4">
-          <h1 className="text-center text-5xl font-bold bg-gradient-to-r from-primary via-secondary to-primary-light bg-clip-text text-transparent animate-pulse-slow">
-            YouTube Sampler
-          </h1>
-          <p className="text-center text-gray-400 mt-2 text-sm">
-            Transform any YouTube video into your personal sample pad
-          </p>
+          <div className="flex items-center justify-center gap-3">
+            <h1 className="text-4xl font-bold text-white">
+              YouTube <span className="text-primary-light">Sampler</span>
+            </h1>
+          </div>
         </div>
       </header>
 

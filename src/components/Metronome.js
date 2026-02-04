@@ -3,6 +3,7 @@ import click1 from "../assets/sounds/metronome.wav";
 import click2 from "../assets/sounds/metronomeup.wav";
 import { PiMetronome } from "react-icons/pi";
 import { IconContext } from "react-icons";
+import { useEffect } from "react";
 
 const Metronome = ({ tempo }) => {
   const {
@@ -14,6 +15,10 @@ const Metronome = ({ tempo }) => {
     setBeatsPerMeasure,
     setSounds
   } = useMetronome(tempo, 4, [click2, click1]);
+
+  useEffect(() => {
+    setBpm(tempo);
+  }, [tempo, setBpm]);
 
   return (
     <div id="metronome">

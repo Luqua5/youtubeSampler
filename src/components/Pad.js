@@ -4,9 +4,8 @@ import { SamplerContext } from '../context/SamplerContext';
 
 
 function Pad({ slice, setSlices, slices, baseTempo }) {
-  const { regionsRef, setIsPlaying, wavesurfer, timeoutRef, recording, isOneShot } = useContext(SamplerContext);
+  const { regionsRef, setIsPlaying, wavesurfer, timeoutRef, recording, isOneShot, tempo } = useContext(SamplerContext);
   
-  // Référence pour stocker la source audio en cours de lecture
   const audioSourceRef = useRef(null);
   
   const playSlice = () => {
@@ -17,7 +16,7 @@ function Pad({ slice, setSlices, slices, baseTempo }) {
         timeoutRef.current = null;
     }
 
-    const playbackRate = slice.tempo / baseTempo;
+    const playbackRate = tempo / baseTempo;
     console.log('playbackRate', playbackRate);
     
     // Trouver la région correspondante

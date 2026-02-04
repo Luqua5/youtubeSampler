@@ -26,14 +26,28 @@
   /* Hide number input spinners */
   .no-spinner {
     -moz-appearance: textfield;
-    -webkit-appearance: none;
-    appearance: none;
+    appearance: textfield;
   }
 
   .no-spinner::-webkit-outer-spin-button,
   .no-spinner::-webkit-inner-spin-button {
     -webkit-appearance: none;
+    appearance: none;
     margin: 0;
+    display: none;
+  }
+
+  /* Force hide for all browsers */
+  input[type="number"].no-spinner::-webkit-outer-spin-button,
+  input[type="number"].no-spinner::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+    display: none;
+  }
+
+  input[type="number"].no-spinner {
+    -moz-appearance: textfield;
+    appearance: textfield;
   }
 
   /* Custom scrollbar */

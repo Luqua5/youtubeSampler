@@ -4,16 +4,29 @@ import Metronome from './Metronome';
 import { SamplerContext } from '../context/SamplerContext';
 import { analyze } from 'web-audio-beat-detector';
 
-const azertyKeys = [
-  ['a', 'z', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
-  ['q', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm'],
-  ['w', 'x', 'c', 'v', 'b', 'n']
-];
+const keyboardLayouts = {
+  azerty: [
+    ['a', 'z', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
+    ['q', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm'],
+    ['w', 'x', 'c', 'v', 'b', 'n']
+  ],
+  qwerty: [
+    ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
+    ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';'],
+    ['z', 'x', 'c', 'v', 'b', 'n']
+  ],
+  qwertz: [
+    ['q', 'w', 'e', 'r', 't', 'z', 'u', 'i', 'o', 'p'],
+    ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'ö'],
+    ['y', 'x', 'c', 'v', 'b', 'n']
+  ]
+};
 
 const random = (min, max) => Math.random() * (max - min) + min
 const randomColor = () => `rgba(${random(0, 255)}, ${random(0, 255)}, ${random(0, 255)}, 0.5)`
 
 function SamplerPads() {
+  const [keyboardLayout, setKeyboardLayout] = useState('azerty');
   const {
     slices,
     setSlices,
@@ -42,6 +55,8 @@ function SamplerPads() {
         wavesurfer.current.pause();
         setIsPlaying(false);
       } else {
+        const playbackRate = tempo / baseTempo;
+        wavesurfer.current.setPlaybackRate(playbackRate);
         wavesurfer.current.play();
         setIsPlaying(true);
       }
@@ -140,9 +155,27 @@ function SamplerPads() {
 
   return (
     <div className="bg-dark-700/30 backdrop-blur-sm border border-primary/20 rounded-xl p-6 shadow-xl">
-      <label className="block text-gray-300 font-semibold mb-4 text-sm uppercase tracking-wide">
-        Sample Pads
-      </label>
+      <div className="flex items-center justify-between mb-4">
+        <label className="block text-gray-300 font-semibold text-sm uppercase tracking-wide">
+          Sample Pads
+        </label>
+        
+        <div className="flex gap-2">
+          {Object.keys(keyboardLayouts).map((layout) => (
+            <button
+              key={layout}
+              onClick={() => setKeyboardLayout(layout)}
+              className={`px-4 py-2 rounded-lg text-xs font-bold uppercase transition-all duration-300 ${
+                keyboardLayout === layout
+                  ? 'bg-gradient-to-r from-primary to-secondary text-white shadow-lg shadow-primary/50'
+                  : 'bg-dark-700/50 text-gray-400 hover:bg-dark-600 hover:text-gray-200 border border-primary/20'
+              }`}
+            >
+              {layout}
+            </button>
+          ))}
+        </div>
+      </div>
       
       {/* Control Panel */}
       <div className="flex flex-wrap gap-3 mb-6 items-center bg-dark-800/50 p-4 rounded-xl border border-primary/10">
@@ -180,7 +213,7 @@ function SamplerPads() {
         {/* Clear & Mode buttons */}
         <button 
           onClick={clearPads} 
-          className="bg-gradient-to-r from-yellow-600 to-orange-500 text-white px-6 py-3 rounded-xl hover:from-yellow-500 hover:to-orange-400 font-semibold transition-all duration-300 shadow-lg hover:shadow-yellow-500/50 transform hover:scale-105"
+          className="bg-dark-700 hover:bg-dark-600 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg border border-primary/20 transform hover:scale-105"
         >
           Clear
         </button>
@@ -189,11 +222,11 @@ function SamplerPads() {
           onClick={handleOneShot} 
           className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg transform hover:scale-105 ${
             isOneShot 
-              ? 'bg-gradient-to-r from-primary to-primary-dark text-white hover:shadow-primary/50' 
-              : 'bg-gradient-to-r from-secondary to-secondary-dark text-white hover:shadow-secondary/50'
+              ? 'bg-primary hover:bg-primary-dark text-white border border-primary-light hover:shadow-primary/50' 
+              : 'bg-dark-700 hover:bg-dark-600 text-white border border-primary/30'
           }`}
         >
-          {isOneShot ? "One-shot" : "Hold"}
+          {isOneShot ? "One-shot" : "Loop"}
         </button>
 
         {/* Tempo Control */}
@@ -204,20 +237,20 @@ function SamplerPads() {
               type="number"
               value={tempo}
               onChange={(e) => setTempo(Number(e.target.value))}
-              className="border border-primary/30 rounded-lg p-2 w-20 bg-dark-700 text-white font-mono text-center focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+              className="no-spinner border border-primary/30 rounded-lg p-2 w-20 bg-dark-700 text-white font-mono text-center focus:outline-none focus:ring-2 focus:ring-primary transition-all"
             />
             <div className="absolute inset-y-0 right-2 flex flex-col justify-center gap-0.5">
               <button 
                 onClick={increaseTempo} 
                 className="text-primary hover:text-primary-light transition-colors"
               >
-                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-3 h-3 rotate-180" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
                 </svg>
               </button>
               <button 
                 onClick={decreaseTempo} 
-                className="text-primary hover:text-primary-light transition-colors rotate-180"
+                className="text-primary hover:text-primary-light transition-colors"
               >
                 <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
@@ -249,7 +282,7 @@ function SamplerPads() {
 
       {/* Keyboard Pads */}
       <div className="keyboard space-y-3">
-        {azertyKeys.map((row, rowIndex) => (
+        {keyboardLayouts[keyboardLayout].map((row, rowIndex) => (
           <div key={rowIndex} className="flex justify-center gap-2">
             {row.map((key) => {
               const slice = slices.find((s) => s.key === key);
